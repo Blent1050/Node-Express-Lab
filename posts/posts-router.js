@@ -10,7 +10,6 @@ router.get('/', async (req, res) => {
     const posts = await Posts.find(req.query);
     res.status(200).json(posts);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: 'Error retrieving users.' });
   }
 });
@@ -30,9 +29,20 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  try {
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving users.' });
+  if (!req.body.title || !req.body.contents) {
+    res
+      .status(400)
+      .json({ message: 'Please provide a valid title and content section.' });
+  } else {
+    try {
+      const post = req.body;
+      if (post) {
+        await Posts.insert(req.body);
+        res.status(201).json({ message: 'The post has been created!', post });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Could not make the post!.' });
+    }
   }
 });
 
